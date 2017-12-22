@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <textarea :id="id">{{ content }}</textarea>
-    </div>
+    <textarea :id="id">{{ currentValue }}</textarea>
 </template>
 
 <script>
@@ -60,7 +58,7 @@
     import 'tinymce/skins/lightgray/skin.min.css'
     import 'tinymce/skins/lightgray/content.min.css'
 
-    import '../js/tinymce/langs/zh_CN.js'
+    import './langs/zh_CN.js'
 
     export default {
         name: 'tinymce',
@@ -68,10 +66,6 @@
             'id': {
                 type: String,
                 required: true
-            },
-            'htmlClass': {
-                default: '',
-                type: String
             },
             'value': {
                 default: ''
@@ -95,7 +89,7 @@
                 default: '',
                 type: String
             },
-            other_options: {
+            options: {
                 default: function() {
                     return {};
                 },
@@ -104,32 +98,40 @@
         },
         data() {
             return {
-                content: '',
+                currentValue: this.value,
                 editor: null,
                 checkerTimeout: null,
                 isTyping: false
             };
         },
         mounted() {
-            this.content = this.value;
             this.init();
         },
         beforeDestroy() {
             this.editor.destroy();
         },
         watch: {
-            value: function (newValue) {
-                if (!this.isTyping) {
-                    if (this.editor !== null)
-                        this.editor.setContent(newValue);
-                    else
-                        this.content = newValue;
-                }
+            // value: function (newValue) {
+            //     if (!this.isTyping) {
+            //         if (this.editor !== null)
+            //             this.editor.setContent(newValue);
+            //         else
+            //             this.content = newValue;
+            //     }
+            // }
+            value(val) {
+                // console.log('value', val);
+                this.currentValue = val;
+            },
+            currentValue(val) {
+                // console.log('current', val);
+                this.$emit('input', val);
             }
+            
         },
         methods: {
             init() {
-                let options = {
+                tinymce.init(Object.assign({
                     selector: '#' + this.id,
                     height: 500,
                     skin: false,
@@ -152,8 +154,7 @@
                             this.$emit('input', this.content);
                         });
                     }
-                };
-                tinymce.init(_.assign(options, this.other_options));
+                }, this.options));
             },
             submitNewContent() {
                 this.isTyping = true;

@@ -1,14 +1,14 @@
 {
-  "name": "vue2-tinymce",
+  "name": "v-tinymce",
   "version": "1.0.0",
-  "description": "vue 2.* component for tinymce",
-  "main": "index.js",
+  "description": "vue2 component for tinymce",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ScoLib/vue-tinymce.git"
+    "url": "git+https://github.com/ScoLib/v-tinymce.git"
   },
   "keywords": [
     "vue",
@@ -17,10 +17,11 @@
   "author": "klgd",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ScoLib/vue-tinymce/issues"
+    "url": "https://github.com/ScoLib/v-tinymce/issues"
   },
-  "homepage": "https://github.com/ScoLib/vue-tinymce#readme",
+  "homepage": "https://github.com/ScoLib/v-tinymce#readme",
   "dependencies": {
-    "tinymce": "^4.7.4"
+    "tinymce": "^4.7.4",
+    "vue": "^2.5.2"
   }
 }
