@@ -4,7 +4,7 @@
 
 <script>
     // Import TinyMCE
-    import tinymce from 'tinymce/tinymce';
+    import TinyMCE from 'tinymce';
 
     // A theme is also required
     import 'tinymce/themes/modern/theme';
@@ -30,7 +30,6 @@
     import 'tinymce/plugins/print';
     import 'tinymce/plugins/searchreplace';
     import 'tinymce/plugins/tabfocus';
-    import 'tinymce/plugins/template';
     import 'tinymce/plugins/textpattern';
     import 'tinymce/plugins/visualblocks';
     import 'tinymce/plugins/anchor';
@@ -61,33 +60,34 @@
     import './langs/zh_CN.js'
 
     export default {
-        name: 'tinymce',
+        name: 'vTinymce',
         props: {
-            'id': {
+            id: {
                 type: String,
                 required: true
             },
-            'value': {
-                default: ''
+            value: {
+                default: '',
+                type: String
             },
-            'plugins': {
+            size: {
+                default: 'basic',
+                type: String
+            },
+            baseURL: {
+                default: '/js/tinymce',
+                type: String
+            },
+            plugins: {
                 default: function () {
                     return [
                         'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                         'searchreplace wordcount visualblocks visualchars code fullscreen',
                         'insertdatetime media nonbreaking save table contextmenu directionality',
-                        'template paste textcolor colorpicker textpattern imagetools toc help emoticons hr'
+                        'paste textcolor colorpicker textpattern imagetools toc help emoticons hr'
                     ];
                 },
                 type: Array
-            },
-            toolbar1: {
-                default: 'formatselect | bold italic  strikethrough  forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
-                type: String
-            },
-            toolbar2: {
-                default: '',
-                type: String
             },
             options: {
                 default: function() {
@@ -100,9 +100,16 @@
             return {
                 currentValue: this.value,
                 editor: null,
-                checkerTimeout: null,
-                isTyping: false
-            };
+                toolbar: {
+                    default: function () {
+                        return [];
+                    },
+                    type: Array
+                },
+            }
+        },
+        created(){
+            if (typeof TinyMCE === "undefined") throw new Error('TinyMCE undefined');
         },
         mounted() {
             this.init();
@@ -111,61 +118,54 @@
             this.editor.destroy();
         },
         watch: {
-            // value: function (newValue) {
-            //     if (!this.isTyping) {
-            //         if (this.editor !== null)
-            //             this.editor.setContent(newValue);
-            //         else
-            //             this.content = newValue;
-            //     }
-            // }
             value(val) {
-                // console.log('value', val);
                 this.currentValue = val;
             },
             currentValue(val) {
-                // console.log('current', val);
                 this.$emit('input', val);
             }
-            
         },
         methods: {
             init() {
-                tinymce.init(Object.assign({
+                switch (this.size) {
+                    case 'simple':
+                        this.toolbar = [
+                            'formatselect fontselect fontsizeselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link table removeformat code'
+                        ];
+                        break;
+                    case 'basic':
+                    default:
+                        this.toolbar = [
+                            'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect | searchreplace | bullist numlist | outdent indent blockquote | link unlink anchor image | undo redo | insertdatetime preview | forecolor backcolor | subscript superscript | charmap emoticons | fullscreen | ltr rtl | visualchars visualblocks hr nonbreaking pagebreak restoredraft toc | table removeformat code'
+                        ];
+                }
+
+                TinyMCE.baseURL = this.baseURL;
+
+                TinyMCE.init(Object.assign({
                     selector: '#' + this.id,
                     height: 500,
                     skin: false,
                     language: 'zh_CN',
-                    toolbar1: this.toolbar1,
-                    toolbar2: this.toolbar2,
+                    menubar: false,
+                    // toolbar_items_size: 'small',
+                    toolbar: this.toolbar,
                     plugins: this.plugins,
+                    relative_urls: false,
+                    convert_urls: false,
                     init_instance_callback: (editor) => {
                         this.editor = editor;
                         editor.on('KeyUp', (e) => {
-                            this.submitNewContent();
+                            this.currentValue = this.editor.getContent();
                         });
                         editor.on('Change', (e) => {
-                            if (this.editor.getContent() !== this.value) {
-                                this.submitNewContent();
+                            if (this.editor.getContent() !== this.currentValue) {
+                                this.currentValue = this.editor.getContent();
                             }
-                        });
-                        editor.on('init', (e) => {
-                            editor.setContent(this.content);
-                            this.$emit('input', this.content);
                         });
                     }
                 }, this.options));
             },
-            submitNewContent() {
-                this.isTyping = true;
-                if (this.checkerTimeout !== null)
-                    clearTimeout(this.checkerTimeout);
-                this.checkerTimeout = setTimeout(() => {
-                    this.isTyping = false;
-                }, 300);
-
-                this.$emit('input', this.editor.getContent());
-            }
         }
     }
 </script>
