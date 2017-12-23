@@ -74,8 +74,8 @@
                 default: 'basic',
                 type: String
             },
-            baseURL: {
-                default: '/js/tinymce',
+            baseUrl: {
+                default: '',
                 type: String
             },
             plugins: {
@@ -90,10 +90,10 @@
                 type: Array
             },
             options: {
-                default: function() {
+                default: function () {
                     return {};
                 },
-                type: Object
+                type: Object|Array
             }
         },
         data() {
@@ -108,7 +108,7 @@
                 },
             }
         },
-        created(){
+        created() {
             if (typeof TinyMCE === "undefined") throw new Error('TinyMCE undefined');
         },
         mounted() {
@@ -127,6 +127,7 @@
         },
         methods: {
             init() {
+                // console.log(this);
                 switch (this.size) {
                     case 'simple':
                         this.toolbar = [
@@ -136,11 +137,11 @@
                     case 'basic':
                     default:
                         this.toolbar = [
-                            'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect | searchreplace | bullist numlist | outdent indent blockquote | link unlink anchor image | undo redo | insertdatetime preview | forecolor backcolor | subscript superscript | charmap emoticons | fullscreen | ltr rtl | visualchars visualblocks hr nonbreaking pagebreak restoredraft toc | table removeformat code'
+                            'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect | searchreplace | bullist numlist | outdent indent blockquote | link unlink anchor image | undo redo | insertdatetime preview | forecolor backcolor | subscript superscript | charmap emoticons | ltr rtl | visualchars visualblocks hr nonbreaking pagebreak restoredraft toc | table removeformat code fullscreen'
                         ];
                 }
 
-                TinyMCE.baseURL = this.baseURL;
+                TinyMCE.baseURL = this.baseUrl;
 
                 TinyMCE.init(Object.assign({
                     selector: '#' + this.id,
@@ -165,6 +166,7 @@
                         });
                     }
                 }, this.options));
+                // console.log(TinyMCE)
             },
         }
     }
@@ -172,5 +174,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+    div.mce-fullscreen {
+        z-index: 1031;
+    }
 </style>
