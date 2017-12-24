@@ -137,7 +137,7 @@
                     case 'basic':
                     default:
                         this.toolbar = [
-                            'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect | searchreplace | bullist numlist | outdent indent blockquote | link unlink anchor image | undo redo | insertdatetime preview | forecolor backcolor | subscript superscript | charmap emoticons | ltr rtl | visualchars visualblocks hr nonbreaking pagebreak restoredraft toc | table removeformat code fullscreen'
+                            'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect | searchreplace | bullist numlist | outdent indent blockquote | link unlink anchor image | undo redo | forecolor backcolor | subscript superscript | charmap emoticons | ltr rtl | visualchars visualblocks hr nonbreaking pagebreak restoredraft insertdatetime toc | table removeformat code fullscreen preview'
                         ];
                 }
 
